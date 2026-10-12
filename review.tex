@@ -1,14 +1,15 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[left=29mm,right=19mm,top=30mm,bottom=28mm,headheight=14pt,headsep=12mm,footskip=14mm]{geometry}
-\usepackage{fontspec}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
 \usepackage{setspace}
 \usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
-\defaultfontfeatures{Ligatures=TeX}
-\setmainfont{Latin Modern Roman}
-\setmonofont{Latin Modern Mono}[Scale=0.92]
+\usepackage{longtable}
+\usepackage{pdflscape}
 
 \setlength{\parindent}{7mm}
 \setlength{\parskip}{0pt}
@@ -32,7 +33,7 @@
 {\LARGE\bfseries Literature Review\hspace{1.2em}}\\[3.2em]
 {\large\bfseries for\hspace{1.2em}}\\[4.2em]
 {\fontsize{20}{28}\selectfont\bfseries BrowseBlock\hspace{1.2em}}\\[1.2em]
-{\large\bfseries AI browser extension for real-time attack prevention.\hspace{1.2em}}\\[3.2em]
+{\large\bfseries AI browser extension for real-time browser based attacks detection and prevention.\hspace{1.2em}}\\[3.2em]
 {\large\bfseries Team 16\hspace{1.2em}}\\[2.6em]
 {\normalsize\bfseries Prepared by,\hspace{1.2em}}\\[2.4em]
 {\small Deon George(SJC23CS086)\hspace{1.2em}}\\[1.1em]
@@ -109,4 +110,41 @@
 \vspace{1.2em}
 \textbf{b) Relevance to BrowseBlock:} This tool is relevant to BrowseBlock’s \textbf{Credential Harvesting Detection} feature because it can automate the inspection of websites that may imitate legitimate login pages to steal usernames, passwords, and other sensitive information. BrowseBlock can use Playwright in its testing and analysis environment to load suspicious websites, inspect dynamically generated login forms, identify password fields and credential-submission forms, and observe form actions, page URLs, and navigation behavior. Playwright’s locator APIs can identify elements using labels, placeholders, roles, and CSS selectors, while its navigation and network-event capabilities can help investigate redirects and requests associated with form submission. These observations can support the development and validation of detection rules that compare the displayed website identity with the actual domain receiving submitted credentials. Combined with BrowseBlock’s URL phishing classifier, domain reputation checks, and risk-scoring system, these features can help identify fake login pages and evaluate whether suspicious credential-harvesting attempts should trigger a warning or blocking action. However, Playwright is best suited to controlled analysis, automated testing, and dataset generation rather than continuous monitoring of every user's browsing session. The production browser extension should perform lightweight, event-driven checks using browser-extension APIs, while Playwright can test those checks against legitimate login pages and simulated phishing pages. Testing must use synthetic credentials and controlled environments; Playwright alone cannot determine whether a login page is malicious or guarantee that credentials will be intercepted.
 
+\newpage
+\begin{landscape}
+\fontsize{10}{14}\selectfont
+\section*{Literature Review Outcome}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{|p{0.7cm}|p{2.5cm}|p{2.7cm}|p{3.3cm}|p{5.1cm}|p{4.9cm}|}
+\hline
+\textbf{SI. No.} & \textbf{Features} & \textbf{Existing Systems} & \textbf{Literature Survey} & \textbf{Advantages / Disadvantages} & \textbf{Proposed System} \\
+\hline
+\endfirsthead
+\hline
+\textbf{SI. No.} & \textbf{Features} & \textbf{Existing Systems} & \textbf{Literature Survey} & \textbf{Advantages / Disadvantages} & \textbf{Proposed System} \\
+\hline
+\endhead
+1 & URL / Fake QR Phishing & Google Safe Browsing & XGBoost-Based URL Phishing Detection & Advantages: Does not require heavy GPU power. Reported to be more accurate than classical ML models such as Random Forest. Disadvantages: Multiple datasets are needed for training, validation and testing. & XGBoost model algorithm. \\
+\hline
+2 & HTML / JavaScript Redirects & Google Safe Browsing; Chrome webNavigation and declarativeNetRequest & Zeng et al., ``Hidden Path: Understanding the Intermediary in Malicious Redirections'' (2022) & Advantages: Monitors and reconstructs redirect chains and identifies HTTP, JavaScript, and HTML redirects, including delayed and multi-step redirects. Disadvantages: Large-scale crawling and analysis can be too resource-intensive for direct browser-extension use. BrowseBlock also requires navigation monitoring, URL reputation checks, risk scoring, and rule-based blocking. & Detects and reconstructs HTTP, JavaScript, HTML, delayed, and multi-step redirect chains. Use Chrome webNavigation for real-time navigation monitoring, URL reputation checks for risk assessment, and declarativeNetRequest for rule-based blocking. \\
+\hline
+3 & Cross-Site Scripting (XSS) & NoScript; Content Security Policy (CSP) & Pan \& Mao, ``Detecting DOM-Sourced Cross-Site Scripting in Browser Extensions''; RXSS Protect (2024) & Advantages: Pan and Mao's dynamic symbolic execution can detect DOM-sourced XSS. RXSS Protect focuses on reflected XSS in URLs. Disadvantages: Dynamic symbolic execution is expensive, while RXSS Protect uses a separate ML server. & Source-to-sink analysis; AST/candidate filtering; reflected-XSS URL and payload analysis. Add lightweight runtime DOM/source-sink monitoring, local XSS heuristics, risk-based warning/blocking, and Playwright testing. \\
+\hline
+4 & Browser Notification Scams & Google Chrome notification protection and Safe Browsing; AdGuard -- Block Push API & Subramani et al., ``When Push Comes to Ads: Measuring the Rise of (Malicious) Push Advertising'' (2020) & Advantages: Analyzes notification abuse, sender/origin information, notification-related campaigns, and landing URLs. Shows that malicious web-push advertising can bypass traditional ad blockers and URL filters. Disadvantages: PushAdMiner requires instrumented browser infrastructure and is not directly suitable for a normal browser extension. & Analyze notification abuse, sender/origin, campaigns, and landing URLs. Add notification-permission monitoring, suspicious page-behavior analysis, domain/URL reputation checks, selective warning/blocking, and controlled Playwright testing. \\
+\hline
+5 & Browser Extension Abuse & Chrome Web Store / Browser Extension Security & CPDetector: Automated Detection of Excessive Permissions in Chrome Extensions & Advantages: Static permission analysis detects excessive permissions and compares requested permissions with actual API usage. Disadvantages: Mainly focuses on static permission abuse; does not cover suspicious behavior, webpage manipulation, or script injection. & Static permission extraction, permission/API mismatch detection, over-privilege warnings, and runtime security monitoring. \\
+\hline
+6 & Cryptojacking & MinerBlock & ``Analyzing In-browser Cryptojacking'' & Advantages: Detects browser mining using WebSocket and mining-behavior patterns; uses CPU-usage analysis. Disadvantages: Dynamic analysis can be resource-intensive in real time. & Use lightweight CPU-threshold checks and WebAssembly/Web Worker detection. Also support redirect-chain monitoring and reconstruction, identification of HTTP/JavaScript/HTML redirects, and detection of delayed and multi-step redirects. \\
+\hline
+7 & Clickjacking & ClearClick & ``Implementation of Extension for Browser to Detect Vulnerable Elements on Web Pages and Avoid Clickjacking'' & Advantages: Detects deceptive elements through clickable-element and iframe analysis; examines visibility and cursor properties. Disadvantages: May not detect all framing attacks. & Clickable-element detection, iframe detection, visibility/opacity analysis, cursor-property analysis, overlay and element-position analysis, and transparent-element detection. \\
+\hline
+8 & Email Phishing Detection & Email spam filters / Gmail spam protection & ``A Machine Learning Approach for Phishing Email Detection Using Random Forest'' & Advantages: Uses feature-based email analysis and Random Forest classification. Disadvantages: Relies on conventional ML-based detection and does not include RAG + LLM, URL-risk fusion, or email-authentication signals used in BrowseBlock. & Use Random Forest for feature-based phishing-email classification. Extract URL count, suspicious URLs, email length, urgency/credential keywords, HTML links, sender-domain mismatch, and URL characteristics to classify emails as phishing or legitimate. \\
+\hline
+9 & Malicious File Downloads & VirusTotal; antivirus / endpoint scanners & N. Srndic and P. Laskov, ``Hidost: A Static Machine-Learning-Based Detector of Malicious Files,'' EURASIP Journal on Information Security (2016) & Advantages: Performs static analysis without executing files, extracts structural features for ML classification, and supports format-specific analysis. Disadvantages: Mainly evaluated on PDF and SWF; does not directly cover EXE, DOC/DOCX, or ZIP files; uses Random Forest rather than XGBoost; and does not include browser interception or threat-intelligence checks. & Static file analysis; format-specific structure extraction; feature extraction and selection; feature-vector generation; ML-based classification; download interception and holding; EXE/PDF/DOC/DOCX/ZIP-specific analysis; XGBoost classification; rule-based detection; hash and threat-intelligence checks; and allow/block decisions with logging. \\
+\hline
+10 & Credential Harvesting & Microsoft Defender SmartScreen; Microsoft Edge & Web scraping with Playwright (2026) & Advantages: HTML and JavaScript can be evaluated with Playwright. Disadvantages: Not specified in the source document. & Use Playwright to detect external domains loading scripts and block scam pop-ups. \\
+\hline
+\end{longtable}
+\end{landscape}
 \end{document}
