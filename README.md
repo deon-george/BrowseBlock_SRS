@@ -1,9 +1,9 @@
-# BrowseBlock Literature Review
+# BrowseBlock SRS
 
 > [!TIP]
 > 📑 [Click here to view the Full Literature Review (`review.pdf`)](./review.pdf)
 
-Welcome to the repository for the BrowseBlock literature review, written in LaTeX. This project serves as a centralized, version-controlled source for the document, allowing for clean formatting and easy updates.
+Welcome to the repository for the BrowseBlock - Software Requirements Specification(SRS), written in LaTeX. This project serves as a centralized, version-controlled source for the document, allowing for clean formatting and easy updates.
 
 ## 🚀 How to Build
 

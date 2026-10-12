@@ -21,16 +21,21 @@
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.5pt}
-\fancyhead[L]{\small\bfseries\itshape Literature Review}
+\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification}
 \fancyhead[R]{\small\bfseries\thepage}
 \fancyfoot[L]{\small\itshape Department of Computer Science and Engineering, SJCET Palai}
-\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+\fancypagestyle{plain}{\fancyhf{}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0.5pt}
+	\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification}
+	\fancyhead[R]{\small\bfseries\thepage}
+	\fancyfoot[L]{\small\itshape Department of Computer Science and Engineering, SJCET Palai}}
 
 \begin{document}
-\thispagestyle{plain}
+\thispagestyle{empty}
 \begin{flushright}
 \vspace*{18mm}
-{\LARGE\bfseries Literature Review\hspace{1.2em}}\\[3.2em]
+{\LARGE\bfseries Software Requirements Specification\hspace{1.2em}}\\[3.2em]
 {\large\bfseries for\hspace{1.2em}}\\[4.2em]
 {\fontsize{20}{28}\selectfont\bfseries BrowseBlock\hspace{1.2em}}\\[1.2em]
 {\large\bfseries AI browser extension for real-time browser based attacks detection and prevention.\hspace{1.2em}}\\[3.2em]
@@ -44,7 +49,450 @@
 {\normalsize\bfseries 11-10-2026\hspace{1.2em}}
 \end{flushright}
 \newpage
+\renewcommand{\contentsname}{Table Of Contents}
+\setcounter{tocdepth}{2}
+\pagenumbering{roman}
 \setcounter{page}{2}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+% BEGIN_INSERTED_SPECIFICATION
+\section*{2. Product Scope}\addcontentsline{toc}{section}{2. Product Scope}
+
+BrowseBlock is an AI/ML-powered browser security platform(both browser extension and web dashboard) designed to detect, analyze, explain, and help prevent browser-based cyber threats in real time. The system consists of a browser extension, a FastAPI backend for centralized security processing, and a React-based web dashboard for security monitoring and reporting. Firebase Authentication manages user registration, sign-in, and identity verification, while MongoDB stores application data such as user-related records, scan history, detection results, threat reports, and system records. The FastAPI backend coordinates security processing, verifies authenticated requests, and accesses MongoDB according to the user's authorization.\par
+
+The browser extension acts as the primary protection layer by monitoring supported browsing activities, evaluating URLs, inspecting webpage content and behaviour, identifying suspicious redirects, and monitoring download events. It provides protection against ten threat categories: URL and fake QR phishing, Cross-Site Scripting (XSS), credential harvesting, HTML/JavaScript redirects, clickjacking, cryptojacking, malicious file downloads, email phishing, browser notification scams, and browser extension abuse.\par
+
+The URL phishing detection module uses XGBoost to classify URLs based on extracted URL and domain features. For QR-based phishing detection, the system decodes supported QR-code inputs and evaluates the embedded URLs using the URL-analysis module.\par
+
+The email phishing detection module uses Random Forest-based screening and available email-authentication signals within the browser extension for initial threat assessment. For detailed analysis through the web dashboard, a Retrieval-Augmented Generation (RAG) pipeline analyzes the email content, extracts URLs, and identifies suspicious patterns. The extracted URLs are further evaluated using BrowseBlock’s URL phishing detection module. This two-stage approach enables lightweight, real-time screening in the browser extension while providing deeper semantic analysis and comprehensive risk assessment through the web dashboard when required.\par
+
+Other protection modules analyze webpage scripts and behaviour, suspicious form submissions, redirect chains, framing patterns, notification-related scam indicators, and observable browser extension activity. Potentially malicious downloads in supported formats, including .zip, .pdf, .exe, .doc, and .docx, are assessed using file-type-specific static analysis, machine-learning models, and security rules. Untrusted files are not executed simply for analysis.\par
+
+The browser extension remains lightweight and event-driven, while computationally intensive analysis is handled by the FastAPI backend where appropriate. The extension provides warnings or blocks risky activities when supported by browser APIs, permissions, and available evidence. These mechanisms provide an additional security layer but cannot guarantee prevention of every browser-based attack.\par
+
+The React web dashboard enables users to manually scan URLs, QR codes, emails, and supported files; review detection history; examine threat reports and analytics; and understand the reasons, indicators, and evidence behind security decisions. Scan results, detection history, threat reports, and applicable system records are stored in MongoDB so that authorized users can retrieve relevant information beyond the current session. Access to stored information shall be restricted according to the authenticated user's identity and permissions.\par
+
+The primary objective of BrowseBlock is to provide a unified, explainable, and user-friendly browser security solution for individuals and organizations. It aims to reduce exposure to phishing attacks and malicious web activities without replacing existing antivirus software, browser security features, or enterprise security solutions.\par
+
+\subsection*{2.1 User Classes and Characteristics}\addcontentsline{toc}{subsection}{2.1 User Classes and Characteristics}
+
+\textbf{Primary Users:} General internet users, students, employees, and individuals who browse websites, access web-based email services, encounter QR codes, and download files. These users may have limited cybersecurity knowledge and require clear warnings, understandable explanations, and practical security recommendations.\par
+
+\textbf{Organizational Users:} Small businesses, educational institutions, and other organizations seeking an additional layer of protection against phishing emails, fraudulent websites, malicious QR codes, suspicious webpage behaviour, and unsafe downloads.\par
+
+\textbf{Security Analysts:} Authorized users who review suspicious activities, examine detection evidence, interpret risk assessments, review threat reports, and investigate security incidents through the web dashboard.\par
+
+\textbf{System Administrators:} Personnel responsible for managing system configurations, maintaining backend services, monitoring system performance, managing authentication-related configuration, and ensuring secure, authorized access to stored security records.\par
+
+The system is intended to provide an accessible interface for non-technical users while offering detailed threat information and detection evidence for users who require more comprehensive security analysis.\par
+
+\subsection*{2.2 Operating Environment}\addcontentsline{toc}{subsection}{2.2 Operating Environment}
+
+\textbf{Browser Environment:} Google Chrome and compatible Chromium-based browsers that support the required browser-extension APIs. Manifest V3 is the intended extension architecture, subject to the availability and limitations of the required APIs.\par
+
+\textbf{Web Dashboard:} A responsive React-based web application accessible through modern desktop web browsers.\par
+
+\textbf{Frontend Technologies:} React and Tailwind CSS for the dashboard interface.\par
+
+\textbf{Backend Environment:} Python with FastAPI for REST API development, request validation, scan-request processing, coordination of detection modules, and communication with machine-learning and AI services. FastAPI endpoints expose the required backend functionality to the browser extension and web dashboard. The backend shall verify Firebase Authentication ID tokens for protected requests, enforce authorization, and interact with MongoDB for authorized data operations. The Firebase Admin SDK may be used for server-side token verification. Asynchronous request handling may be used where appropriate for I/O-bound operations.\par
+
+\textbf{Machine-Learning Environment:} Python-based machine-learning components, including XGBoost for URL phishing detection and Random Forest for initial email phishing screening. Type-specific static analysis, machine-learning models, and deterministic security rules support malicious file assessment. SHAP is used where appropriate to explain relevant tree-model predictions.\par
+
+\textbf{AI-Based Email Analysis:} RAG and LLM techniques support deeper semantic analysis of suspicious emails, including social engineering, impersonation, urgency, credential harvesting, and phishing intent. Available email-authentication signals are incorporated into the overall risk assessment where applicable.\par
+
+\textbf{Database Environment:} MongoDB is used as the application's database for storing relevant user profile metadata, scan history, detection results, threat reports, and system records. Firebase Authentication manages user authentication and credentials; passwords and authentication secrets shall not be stored in MongoDB. Application data shall be associated with the appropriate authenticated user or authorized role, and database access shall be restricted accordingly.\par
+
+\textbf{Network Requirements:} Network connectivity is required for communication between the browser extension, the FastAPI backend, the web dashboard, Firebase Authentication, MongoDB, and any enabled external threat-intelligence or AI services. Access to external services depends on their configuration and availability. MongoDB access shall be restricted to authorized backend services rather than exposed directly to untrusted clients.\par
+
+\textbf{Security Requirements:} The system should use HTTPS for network communication, Firebase Authentication for user sign-in and identity verification, server-side verification of Firebase ID tokens by FastAPI, and appropriate authorization checks for protected endpoints and stored records. MongoDB access must be restricted, and queries returning user-specific data must enforce ownership or role-based access controls. URLs, email content, downloaded files, authentication tokens, and other potentially sensitive information must be handled securely. Data collection and retention should be minimized to protect user privacy.\par
+
+\subsection*{2.3 Authentication and Application Data Management}\addcontentsline{toc}{subsection}{2.3 Authentication and Application Data Management}
+
+\textbf{User Authentication:} Firebase Authentication shall be used for user registration, sign-in, and identity verification. The frontend shall use the Firebase Authentication client integration appropriate to the application. Protected requests to FastAPI shall include the Firebase ID token, and the backend shall validate the token server-side before processing the request.\par
+
+\textbf{Application Data:} MongoDB shall store applicable user profile metadata, scan history, detection results, threat reports, and system records. Authentication credentials and passwords shall remain managed by Firebase Authentication and shall not be stored in MongoDB.\par
+
+\textbf{Authorization and Privacy:} Data access shall be restricted to the authenticated user or other explicitly authorized roles. The backend shall enforce authorization before reading or changing user-specific MongoDB records. Sensitive URL parameters, email content, webpage contents, downloaded file contents, and authentication tokens shall not be retained unnecessarily. The retention of scan records and reports shall follow the system's configured privacy and retention policy.\par
+
+\section*{3. Objectives}\addcontentsline{toc}{section}{3. Objectives}
+
+\textbf{Real-Time Threat Handling:} Detect, analyze, explain, and prevent major browser-based cyber threats in real time.\par
+
+\textbf{Active User Protection:} Provide active protection while the user browses using a browser extension by monitoring events, issuing warnings, and blocking harmful actions whenever possible.\par
+
+\textbf{Core Security Philosophy Execution:} Implement a security lifecycle focused on detecting threats, assessing risk, explaining why they are dangerous, and preventing harmful actions.\par
+
+\textbf{Centralized Analysis and Management:} Support client-side protection with a FastAPI backend for centralized security processing, deep model inference, model management, and authorized interaction with MongoDB.\par
+
+\textbf{Visibility and Reporting:} Provide centralized visibility into overall security posture, threat statistics, analytics, incident details, persistent detection history, and manual scanning capabilities through the web dashboard, using records stored in MongoDB and enforcing user-specific access controls.\par
+
+\textbf{Proportional Risk Evaluation:} Move away from simple binary detection by utilizing a tiered risk decision model (Safe/allow, Suspicious/warn, High-risk/block) based on evaluated threat risk levels.\par
+
+\textbf{Secure Authentication and Access Control:} Use Firebase Authentication for user registration, sign-in, and identity verification. FastAPI shall validate Firebase ID tokens and enforce authorization before allowing access to protected endpoints or user-specific MongoDB records.\par
+
+\textbf{Balancing Performance and Security:} Maintain a lightweight, event-driven client layer that safeguards user privacy and separates AI/ML risk assessment from deterministic browser enforcement.\par
+
+\section*{4. System Features}\addcontentsline{toc}{section}{4. System Features}
+
+\subsection*{4.1 URL and Fake QR Phishing}\addcontentsline{toc}{subsection}{4.1 URL and Fake QR Phishing}
+
+\subsubsection*{4.1.1 Description}
+
+Evaluates URLs using an XGBoost classifier across normalized numerical features (such as URL length, IP usage, domain age, subdomains, and brand impersonation indicators), and decodes QR codes to evaluate the underlying URL payload to warn or block navigation.\par
+
+\subsubsection*{4.1.2 Functional Requirements}
+
+\textbf{REQ-01 (URL Monitoring):} The system shall monitor supported browser navigation events and identify URLs requiring phishing analysis.\par
+
+\textbf{REQ-02 (URL Normalization):} The system shall normalize URLs before extracting features for phishing classification.\par
+
+\textbf{REQ-03 (Feature Extraction):} The system shall extract configured URL and domain features, including URL length, subdomains, IP-address usage, special characters, suspicious keywords, and available domain information.\par
+
+\textbf{REQ-04 (XGBoost Classification):} The system shall use an XGBoost classifier to assess the phishing risk of supported URLs.\par
+
+\textbf{REQ-05 (QR Code Decoding):} The system shall decode QR codes submitted through supported scanning workflows and extract their payloads.\par
+
+\subsubsection*{4.1.3 Non-Functional Requirements}
+
+\textbf{REQ-01 (Processing Efficiency):} The system shall perform URL preprocessing and classification efficiently to minimize unnecessary browsing delays.\par
+
+\textbf{REQ-02 (Detection Accuracy):} The URL detector shall be evaluated using appropriate validation data to measure precision, recall, and false-positive rates.\par
+
+\textbf{REQ-03 (Input Robustness):} The system shall handle malformed, unusually long, and encoded URLs without crashing.\par
+
+\textbf{REQ-04 (Privacy):} The system shall minimize the storage of sensitive URL parameters and unnecessary browsing information.\par
+
+\subsection*{4.2 Cross-Site Scripting (XSS)}\addcontentsline{toc}{subsection}{4.2 Cross-Site Scripting (XSS)}
+
+\subsubsection*{4.2.1 Description}
+
+Detects potential Cross-Site Scripting (XSS) attacks by inspecting webpage content, JavaScript behavior, and DOM manipulation for suspicious script injection indicators. The system addresses three types of XSS attacks: reflected XSS, stored XSS, and DOM-based XSS. Detection techniques include identifying suspicious URL parameters, injected script patterns, dynamically generated code, obfuscated JavaScript, unsafe DOM sinks, and unexpected script sources. BrowseBlock uses configured detection rules and observable browser behavior to assess potential threats, warn users, and restrict suspicious interactions where browser capabilities permit.\par
+
+\subsubsection*{4.2.2 Functional Requirements}
+
+\textbf{REQ-10 (Webpage Inspection):} The system shall inspect supported webpage content, URL parameters, and observable JavaScript behavior for indicators associated with XSS attacks.\par
+
+\textbf{REQ-11 (Script Pattern Detection):} The system shall identify configured suspicious patterns involving inline scripts, dynamically generated code, obfuscated JavaScript, and unexpected script sources.\par
+
+\textbf{REQ-12 (DOM Behavior Analysis):} The system shall analyze observable DOM manipulation patterns and potentially unsafe source-to-sink flows associated with client-side script injection.\par
+
+\textbf{REQ-13 (Reflected XSS Detection):} The system shall identify potential reflected XSS by examining URL parameters and other request-derived inputs for suspicious script injection patterns and their observable reflection in webpage content.\par
+
+\textbf{REQ-14 (Stored XSS Detection):} The system shall identify observable indicators of potential stored XSS, including suspicious injected content rendered in webpages and persistent script patterns where inspection capabilities permit. Detection shall account for content that may originate from stored user submissions or other server-provided data.\par
+
+\textbf{REQ-15 (DOM-Based XSS Detection):} The system shall identify potential DOM-based XSS by inspecting observable client-side behavior involving untrusted inputs and potentially unsafe DOM or JavaScript execution sinks.\par
+
+\textbf{REQ-16 (XSS Risk Assessment):} The system shall evaluate detected indicators using configured rules and available analysis components to determine the potential severity of an XSS threat.\par
+
+\textbf{REQ-17 (Reflected XSS Prevention):} The system shall warn users about suspected reflected XSS and block known malicious URLs or restrict navigation where supported browser capabilities and reliable detection rules permit.\par
+
+\textbf{REQ-18 (Stored XSS Prevention):} The system shall warn users about suspected stored XSS content and restrict access to affected pages or known malicious resources where supported browser capabilities permit. The system shall not assume that a browser extension can remove the underlying stored payload from the server.\par
+
+\textbf{REQ-19 (DOM-Based XSS Prevention):} The system shall warn users about suspected DOM-based XSS and restrict identified malicious navigation or resource loading where supported. The system shall apply available browser-level blocking mechanisms without relying solely on removing DOM elements after potentially harmful scripts have executed.\par
+
+\textbf{REQ-20 (XSS Warning):} The system shall provide users with a warning when supported inspection identifies potentially dangerous script injection or execution behavior.\par
+
+\textbf{REQ-21 (Interaction Protection):} The system shall restrict suspicious client-side interactions using supported browser extension capabilities and configured protection rules.\par
+
+\textbf{REQ-22 (Detection Logging):} The system shall record relevant detection indicators, the identified XSS category where determinable, the risk assessment, and the protective action without unnecessarily storing complete webpage contents.\par
+
+\subsubsection*{4.2.3 Non-Functional Requirements}
+
+\textbf{REQ-05 (Performance):} The system shall inspect webpage content and observable JavaScript behavior without introducing unnecessary page-loading or interaction delays.\par
+
+\textbf{REQ-06 (Detection Reliability):} The detector shall minimize false positives involving legitimate JavaScript, URL parameters, dynamic content, and normal DOM manipulation.\par
+
+\textbf{REQ-07 (Privacy):} The system shall minimize the collection and storage of webpage content, URL parameters, and other potentially sensitive data during XSS detection.\par
+
+\textbf{REQ-08 (Detection Coverage):} The system shall implement distinct detection rules and test cases for reflected XSS, stored XSS, and DOM-based XSS, subject to browser visibility and extension permission limitations.\par
+
+\textbf{REQ-09 (Prevention Limitations):} The system shall distinguish between detecting suspicious behavior and preventing script execution, and shall not report an attack as blocked unless the configured protective action has actually been applied.\par
+
+\subsection*{4.3 Credential Harvesting}\addcontentsline{toc}{subsection}{4.3 Credential Harvesting}
+
+\subsubsection*{4.3.1 Description}
+
+Detects potential credential-harvesting attempts by analyzing suspicious external script loading, deceptive login interfaces, and scam pop-ups. Playwright is used in the analysis and testing workflow to automate webpage interactions, monitor network requests, identify external script domains, and investigate suspicious pop-up behavior. The collected indicators support risk assessment and the development of blocking rules within the BrowseBlock browser extension.\par
+
+\subsubsection*{4.3.2 Functional Requirements}
+
+\textbf{REQ-17 (External Script Monitoring):} The system shall identify and monitor external domains loading JavaScript resources on webpages using Playwright-based analysis.\par
+
+\textbf{REQ-18 (Suspicious Domain Detection):} The system shall evaluate external script domains against configured indicators, domain reputation information, and available threat intelligence to identify potentially malicious resources.\par
+
+\textbf{REQ-19 (Scam Pop-up Detection):} The system shall identify suspicious pop-ups and dynamically generated browser-page overlays that exhibit configured scam indicators.\par
+
+\textbf{REQ-20 (Credential-Harvesting Indicators):} The system shall analyze observable webpage behavior, including suspicious scripts, deceptive login interfaces, and pop-ups requesting sensitive information, to assess potential credential-harvesting risk.\par
+
+\textbf{REQ-21 (Risk Assessment):} The system shall combine relevant script-domain, webpage, and pop-up indicators to determine the potential risk of credential harvesting.\par
+
+\textbf{REQ-22 (Scam Pop-up Blocking):} The browser extension shall warn users about or block detected scam pop-ups using supported browser capabilities and configured detection rules.\par
+
+\textbf{REQ-23 (Suspicious Resource Blocking):} The system shall block identified malicious script URLs or domains where reliable blocking rules and browser permissions are available.\par
+
+\textbf{REQ-24 (Detection Logging):} The system shall record detected indicators, risk assessments, and protective actions without collecting or logging actual passwords.\par
+
+\subsubsection*{4.3.3 Non-Functional Requirements}
+
+\textbf{REQ-05 (Response Time):} The system shall minimize delays during script-domain inspection and scam pop-up detection.\par
+
+\textbf{REQ-06 (Credential Privacy):} The system shall not collect or log actual passwords during its normal detection process.\par
+
+\textbf{REQ-10 (Detection Accuracy):} The detector shall minimize false positives involving legitimate third-party scripts, authentication providers, and normal pop-up behavior.\par
+
+\subsection*{4.4 HTML/JavaScript Redirects}\addcontentsline{toc}{subsection}{4.4 HTML/JavaScript Redirects}
+
+\subsubsection*{4.4.1 Description}
+
+Monitors HTTP redirects, JavaScript-based navigation, and meta-refresh tags to trace redirect chains, evaluate destination reputation, and interrupt malicious navigation.\par
+
+\subsubsection*{4.4.2 Functional Requirements}
+
+\textbf{REQ-25 (HTTP Redirect Monitoring):} The system shall monitor supported HTTP redirects and browser navigation events.\par
+
+\textbf{REQ-26 (Client-Side Redirect Detection):} The system shall inspect observable JavaScript navigation and HTML meta-refresh indicators.\par
+
+\textbf{REQ-27 (Redirect Chain Tracking):} The system shall maintain an observable sequence of source and destination URLs associated with a redirect chain.\par
+
+\textbf{REQ-28 (Destination Reputation Analysis):} The system shall evaluate redirect destinations using the URL phishing detector and available threat-intelligence information.\par
+
+\textbf{REQ-29 (Redirect Risk Assessment):} The system shall identify redirect chains that contain configured indicators of potentially malicious navigation.\par
+
+\textbf{REQ-30 (Malicious Navigation Prevention):} The system shall warn about or interrupt navigation to high-risk destinations where supported.\par
+
+\textbf{REQ-31 (Redirect Event Logging):} The system shall record relevant redirect information, the final risk assessment, and the action taken.\par
+
+\subsubsection*{4.4.3 Non-Functional Requirements}
+
+\textbf{REQ-11 (Navigation Performance):} The system shall analyze redirect chains efficiently to minimize unnecessary navigation delays.\par
+
+\textbf{REQ-12 (Monitoring Reliability):} The system shall handle incomplete or unavailable redirect information without falsely reporting that the entire redirect chain was analyzed.\par
+
+\textbf{REQ-13 (Resource Efficiency):} The system shall avoid unnecessary repeated analysis of the same redirect event.\par
+
+\subsection*{4.5 Clickjacking}\addcontentsline{toc}{subsection}{4.5 Clickjacking}
+
+\subsubsection*{4.5.1 Description}
+
+Identifies deceptive framing behavior and suspicious iframe setups to block risky interactions or issue warnings, complementing server-side defenses like CSP frame-ancestors and X-Frame-Options.\par
+
+\subsubsection*{4.5.2 Functional Requirements}
+
+\textbf{REQ-32 (Iframe Inspection):} The system shall inspect observable iframe attributes and webpage framing structures.\par
+
+\textbf{REQ-33 (Suspicious Frame Detection):} The system shall identify configured indicators of deceptive framing, suspicious positioning, and potentially misleading interactive elements.\par
+
+\textbf{REQ-34 (Interaction Risk Assessment):} The system shall evaluate detected indicators to determine potential clickjacking risk.\par
+
+\textbf{REQ-35 (Clickjacking Warning):} The system shall warn users when supported inspection identifies suspicious framing behavior.\par
+
+\textbf{REQ-36 (Interaction Protection):} The system shall block or restrict risky interactions where a reliable prevention mechanism is available through supported browser capabilities.\par
+
+\textbf{REQ-37 (Detection Logging):} The system shall record relevant indicators, risk assessments, and protective actions.\par
+
+\subsubsection*{4.5.3 Non-Functional Requirements}
+
+\textbf{REQ-14 (Interaction Performance):} The system shall perform frame inspection without significantly affecting normal webpage interactions.\par
+
+\textbf{REQ-15 (Detection Reliability):} The detector shall minimize false positives involving legitimate iframe usage and embedded content.\par
+
+\textbf{REQ-16 (Browser Compatibility):} The system shall implement clickjacking protections within the capabilities and permissions of the selected browser.\par
+
+\subsection*{4.6 Cryptojacking}\addcontentsline{toc}{subsection}{4.6 Cryptojacking}
+
+\subsubsection*{4.6.1 Description}
+
+Inspects scripts, WebAssembly behaviors, web worker activities, and abnormal resource-usage patterns to identify and block unauthorized cryptocurrency mining in the browser.\par
+
+\subsubsection*{4.6.2 Functional Requirements}
+
+\textbf{REQ-38 (Mining Script Detection):} The system shall inspect observable script indicators associated with unauthorized cryptocurrency mining.\par
+
+\textbf{REQ-39 (WebAssembly and Worker Analysis):} The system shall analyze supported WebAssembly and web worker indicators for suspicious mining-related behavior.\par
+
+\textbf{REQ-40 (Mining Resource Identification):} The system shall identify configured indicators associated with known cryptocurrency-mining resources.\par
+
+\textbf{REQ-41 (Resource Usage Analysis):} The system shall evaluate available browser resource-usage indicators when supported.\par
+
+\textbf{REQ-42 (Cryptojacking Risk Assessment):} The system shall combine relevant indicators to determine a cryptojacking risk category.\par
+
+\textbf{REQ-43 (Cryptojacking Protection):} The system shall warn users about detected risks or block suspicious resources where browser capabilities permit.\par
+
+\textbf{REQ-44 (Activity Logging):} The system shall record relevant detection evidence and the action taken.\par
+
+\subsubsection*{4.6.3 Non-Functional Requirements}
+
+\textbf{REQ-17 (Resource Efficiency):} The system shall minimize additional CPU and memory consumption during cryptojacking detection.\par
+
+\textbf{REQ-18 (Detection Accuracy):} The detector shall minimize false positives involving legitimate computationally intensive webpages.\par
+
+\textbf{REQ-19 (Monitoring Limitations):} The system shall restrict its conclusions to script behavior and resource information observable through supported browser mechanisms.\par
+
+\subsection*{4.7 Malicious File Download Detection}\addcontentsline{toc}{subsection}{4.7 Malicious File Download Detection}
+
+\subsubsection*{4.7.1 Description}
+
+Implements a malicious file download detection pipeline that monitors supported downloads of \texttt{.exe}, \texttt{.zip}, \texttt{.pdf}, \texttt{.doc}, and \texttt{.docx} files through the browser extension. The system uses content-based file identification, format-specific static analysis, SHA-256 hash calculation, available threat-intelligence checks, deterministic rules, and XGBoost classification to assess file risk without executing untrusted files. The FastAPI backend coordinates analysis and risk assessment, while a native helper application can provide access to file contents and support controlled quarantine and release workflows. Based on the assessment, BrowseBlock shall allow, warn about, cancel, or quarantine files where supported by the selected integration.\par
+
+\subsubsection*{4.7.2 Functional Requirements}
+
+\textbf{REQ-45 (Download Monitoring):} The browser extension shall monitor supported download events and collect available metadata, including the download URL, filename, MIME type, and download identifier.\par
+
+\textbf{REQ-46 (File Type Identification):} The system shall identify supported \texttt{.exe}, \texttt{.zip}, \texttt{.pdf}, \texttt{.doc}, and \texttt{.docx} files using filename extensions, MIME types, and content-based identification where file access is available.\par
+
+\textbf{REQ-47 (Executable Analysis):} The system shall extract configured executable features, including PE headers, section characteristics, entropy, imported APIs, digital signature information, and resources where applicable.\par
+
+\textbf{REQ-48 (PDF Analysis):} The system shall inspect PDF structures for potentially suspicious JavaScript, \texttt{OpenAction} entries, embedded files, objects, streams, and external URLs.\par
+
+\textbf{REQ-49 (Document Analysis):} The system shall inspect supported DOC and DOCX files for applicable macros, OLE objects, embedded files, external relationships, and suspicious document structures.\par
+
+\textbf{REQ-50 (Archive Analysis):} The system shall inspect ZIP archive metadata, contained file types, suspicious paths, compression characteristics, and nested archives within configured analysis limits.\par
+
+\textbf{REQ-51 (Content-Based File Verification):} The system shall verify file types using available content-based identification and shall not rely solely on filename extensions or MIME types.\par
+
+\textbf{REQ-52 (Feature Extraction):} The system shall extract configured numerical and categorical features from supported file formats and produce structured records suitable for classification.\par
+
+\textbf{REQ-53 (Hash and Reputation Analysis):} The system shall calculate a SHA-256 hash for accessible files and check available threat-intelligence or file-reputation sources where configured.\par
+
+\textbf{REQ-54 (File Risk Classification):} The system shall evaluate extracted features using a configured XGBoost classifier, deterministic detection rules, and available hash-reputation results.\par
+
+\textbf{REQ-55 (Risk Decision):} The system shall classify analyzed files as low-risk, suspicious, or high-risk according to the configured decision policy, taking into account analysis completeness and available evidence.\par
+
+\textbf{REQ-56 (Download Protection):} The browser extension shall warn about or cancel supported downloads according to the risk assessment and available browser capabilities. Where pre-use protection is required, the system shall support a controlled workflow through a native helper application or download gateway.\par
+
+\textbf{REQ-57 (File Quarantine and Release):} Where a native helper or controlled gateway is deployed, the system shall support holding suspicious files in a controlled location until analysis is complete and shall permit release or quarantine according to the configured risk policy.\par
+
+\textbf{REQ-58 (Analysis Coordination):} The system shall use the FastAPI backend to coordinate file-analysis requests, feature-processing workflows, classification, and the return of assessment results where backend processing is required.\par
+
+\textbf{REQ-59 (Analysis Failure Handling):} The system shall identify unsupported formats, malformed files, parser errors, timeouts, and incomplete analysis, and shall apply the configured warning or hold policy rather than automatically treating failed analysis as a safe result.\par
+
+\textbf{REQ-60 (File Analysis Logging):} The system shall record the file type, timestamp, available hash, risk assessment, relevant detection indicators, and protective action, subject to configured privacy and retention policies.\par
+
+\subsubsection*{4.7.3 Non-Functional Requirements}
+
+\textbf{REQ-20 (Safe File Processing):} The system shall analyze untrusted files without executing them and shall isolate file parsers and analysis components where practical.\par
+
+\textbf{REQ-21 (Resource Limits):} The system shall enforce configurable limits on file size, processing time, archive depth, decompressed size, entry count, and resource consumption.\par
+
+\textbf{REQ-22 (Processing Reliability):} The system shall handle malformed files, unsupported formats, parser failures, and analysis timeouts without crashing the extension, backend, or analysis service.\par
+
+\textbf{REQ-23 (Privacy and Retention):} The system shall minimize the transmission and retention of downloaded file contents, retaining only the information required for detection, auditing, and configured security purposes.\par
+
+\textbf{REQ-24 (Type Verification):} The system shall use content-based file identification where file bytes are available and shall treat discrepancies between the filename extension, MIME type, and actual file format as potential risk indicators rather than definitive proof of maliciousness.\par
+
+\textbf{REQ-30 (Analysis Isolation):} The system shall isolate file-processing components from the main application where practical and shall prevent untrusted files from being executed during static analysis.\par
+
+\textbf{REQ-31 (Protection Reliability):} The system shall distinguish between download monitoring, file analysis, and enforced blocking or quarantine, and shall report a protective action as successful only when the action has actually been confirmed.\par
+
+\textbf{REQ-32 (Model Reliability):} The system shall evaluate the XGBoost classifier using appropriate validation data and shall not rely on model predictions alone when making high-impact file-blocking decisions.\par
+
+\textbf{REQ-33 (Integration Compatibility):} The system shall implement download monitoring and enforcement according to the capabilities and permissions of the selected browser APIs, native helper, or controlled download gateway.\par
+\subsection*{4.8 Email Phishing Detection}\addcontentsline{toc}{subsection}{4.8 Email Phishing Detection}
+
+\subsubsection*{4.8.1 Description}
+
+Implements a two-stage email phishing detection pipeline. The browser extension performs lightweight initial screening using a Random Forest classifier and available email-authentication signals, including SPF, DKIM, and DMARC results. For detailed investigation, the web dashboard uses a Retrieval-Augmented Generation (RAG) pipeline to analyze email content, identify social engineering tactics, and extract URLs. The extracted URLs are evaluated using BrowseBlock's URL phishing detection module. This architecture enables efficient initial screening in the browser extension while providing deeper contextual analysis through the web dashboard when required.\par
+
+\subsubsection*{4.8.2 Functional Requirements}
+
+\textbf{REQ-56 (Email Input):} The system shall accept email content through supported browser extension integrations or manual submission workflows in the web dashboard.\par
+
+\textbf{REQ-57 (Email Feature Extraction):} The system shall extract configured email features, including message length, subject characteristics, URL count, attachment presence, suspicious keyword counts, and sender-domain mismatch, where the required data is available.\par
+
+\textbf{REQ-58 (Random Forest Screening):} The browser extension shall use a Random Forest classifier to perform lightweight initial email phishing assessment using configured email features.\par
+
+\textbf{REQ-59 (Email Authentication Signals):} The browser extension shall incorporate available SPF, DKIM, and DMARC authentication results into the initial email risk assessment.\par
+
+\textbf{REQ-60 (Initial Risk Assessment):} The browser extension shall combine the Random Forest prediction and available email-authentication signals to identify potentially suspicious emails and provide an initial risk assessment.\par
+
+\textbf{REQ-61 (Email Submission for Detailed Analysis):} The system shall allow users to submit email content to the web dashboard for detailed phishing analysis when required.\par
+
+\textbf{REQ-62 (RAG-Based Email Analysis):} The web dashboard shall use a Retrieval-Augmented Generation (RAG) pipeline to retrieve relevant information from a configured phishing knowledge base and support the contextual analysis of submitted email content.\par
+
+\textbf{REQ-63 (Email URL Extraction):} The RAG-based analysis workflow shall identify and extract supported URLs from submitted email content for further security assessment.\par
+
+\textbf{REQ-64 (URL Phishing Analysis):} The system shall evaluate extracted URLs using BrowseBlock's URL phishing detection module and incorporate the resulting risk information into the detailed email assessment.\par
+
+\textbf{REQ-65 (Semantic Threat Assessment):} The configured LLM component within the RAG workflow shall analyze email content for indicators of social engineering, impersonation, urgency, credential harvesting, and malicious intent.\par
+
+\textbf{REQ-66 (Detailed Risk Classification):} The web dashboard shall combine available initial screening results, URL analysis results, and contextual analysis evidence to classify the email as safe, suspicious, or high-risk according to the configured decision policy.\par
+
+\textbf{REQ-67 (Email Warning):} The system shall warn users about suspicious or high-risk emails and present available supporting evidence.\par
+
+\textbf{REQ-68 (Email Link Protection):} The system shall warn users about or restrict access to associated email links and actions where supported by the browser integration.\par
+
+\textbf{REQ-69 (Email Event Logging):} The system shall record the assessment result, timestamp, available evidence, and protective action, subject to configured privacy and retention policies.\par
+
+\subsubsection*{4.8.3 Non-Functional Requirements}
+
+\textbf{REQ-25 (Analysis Efficiency):} The system shall perform lightweight initial screening within the browser extension and reserve resource-intensive RAG and LLM analysis for detailed investigations through the web dashboard.\par
+
+\textbf{REQ-26 (Processing Timeouts):} The system shall apply configurable timeouts to RAG retrieval, LLM inference, and external service requests.\par
+
+\textbf{REQ-27 (Email Privacy):} The system shall minimize the transmission and retention of sensitive email content and obtain user authorization where required before submitting email content for detailed analysis.\par
+
+\textbf{REQ-28 (Authentication Signal Reliability):} The system shall not treat successful SPF, DKIM, or DMARC checks as definitive proof that an email is safe.\par
+
+\textbf{REQ-29 (Failure Handling):} The system shall distinguish incomplete or failed email analysis from a completed safe verdict and shall communicate analysis limitations where appropriate.\par
+
+\subsection*{4.9 Browser Notification Scams}\addcontentsline{toc}{subsection}{4.9 Browser Notification Scams}
+
+\subsubsection*{4.9.1 Description}
+
+Detects deceptive notification requests and prompts imitating urgent system alerts, prizes, or fake security warnings, issuing warnings or blocking interactions when browser APIs allow.\par
+
+\subsubsection*{4.9.2 Functional Requirements}
+
+\textbf{REQ-68 (Notification Request Monitoring):} The system shall monitor supported webpage notification-permission requests and related prompts.\par
+
+\textbf{REQ-69 (Deceptive Prompt Detection):} The system shall identify configured indicators of fake security warnings, prize scams, urgent alerts, and deceptive notification requests.\par
+
+\textbf{REQ-70 (Notification URL Analysis):} The system shall evaluate relevant URLs associated with detected notification-related scams.\par
+
+\textbf{REQ-71 (Notification Scam Assessment):} The system shall assess observable notification-related indicators and determine a risk category.\par
+
+\textbf{REQ-72 (Notification Protection):} The system shall warn users about suspicious notification-related interactions and restrict associated actions where browser capabilities permit.\par
+
+\textbf{REQ-73 (Notification Event Logging):} The system shall record relevant detection evidence and protective actions.\par
+
+\subsubsection*{4.9.3 Non-Functional Requirements}
+
+\textbf{REQ-30 (Usability):} The system shall minimize interference with legitimate website notification functionality.\par
+
+\textbf{REQ-31 (Detection Reliability):} The system shall minimize false positives involving legitimate notification prompts.\par
+
+\textbf{REQ-32 (Monitoring Scope):} The system shall limit its conclusions to notification-related content and behavior observable through supported browser mechanisms.\par
+
+\subsection*{4.10 Browser Extension Abuse}\addcontentsline{toc}{subsection}{4.10 Browser Extension Abuse}
+
+\subsubsection*{4.10.1 Description}
+
+Identifies suspicious browser extensions by monitoring overly broad permissions, unexpected webpage tampering, and malicious script injection through observable browser security mechanisms.\par
+
+\subsubsection*{4.10.2 Functional Requirements}
+
+\textbf{REQ-74 (Extension Behavior Monitoring):} The system shall monitor observable browser and webpage indicators associated with potential extension abuse.\par
+
+\textbf{REQ-75 (Permission Analysis):} The system shall evaluate extension-permission information where the browser exposes the required information through supported APIs.\par
+
+\textbf{REQ-76 (Webpage Tampering Detection):} The system shall identify configured indicators of unexpected webpage manipulation and suspicious script injection.\par
+
+\textbf{REQ-77 (Abuse Risk Assessment):} The system shall classify observed indicators using configured detection rules and available evidence.\par
+
+\textbf{REQ-78 (Abuse Warning):} The system shall warn users about potentially abusive extension behavior when sufficient observable evidence is available.\par
+
+\textbf{REQ-79 (Abuse Event Logging):} The system shall record available indicators and the resulting risk assessment.\par
+
+\subsubsection*{4.10.3 Non-Functional Requirements}
+
+\textbf{REQ-33 (Monitoring Efficiency):} The system shall minimize additional browser resource consumption during extension-abuse detection.\par
+
+\textbf{REQ-34 (Detection Scope):} The system shall limit its conclusions to extension behavior and permission information observable through supported browser mechanisms.\par
+
+\textbf{REQ-35 (Privacy):} The system shall minimize the collection of unrelated browsing information during extension-abuse detection.\par
+% END_INSERTED_SPECIFICATION
 
 \noindent\hspace{7mm}{\fontsize{26}{32}\selectfont\bfseries Literature Review}\par
 \vspace{2.2em}
