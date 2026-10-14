@@ -11,8 +11,13 @@
 \usepackage{longtable}
 \usepackage{pdflscape}
 
+\hypersetup{pageanchor=false}
+\let\originaladdcontentsline\addcontentsline
+\renewcommand{\addcontentsline}[3]{\phantomsection\originaladdcontentsline{#1}{#2}{#3}}
+
 \setlength{\parindent}{7mm}
 \setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{3em}
 
 \titleformat{\section}{\Large\bfseries\setstretch{1.45}\raggedright}{\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{2.2em}{1.4em}
@@ -55,12 +60,16 @@
 \setcounter{page}{2}
 \tableofcontents
 \clearpage
+\hypersetup{pageanchor=true}
 \pagenumbering{arabic}
 
 % BEGIN_INSERTED_SPECIFICATION
-\section*{2. Product Scope}\addcontentsline{toc}{section}{2. Product Scope}
+
+\section*{1. Introduction}\addcontentsline{toc}{section}{1. Introduction}
 
 BrowseBlock is an AI/ML-powered browser security platform(both browser extension and web dashboard) designed to detect, analyze, explain, and help prevent browser-based cyber threats in real time. The system consists of a browser extension, a FastAPI backend for centralized security processing, and a React-based web dashboard for security monitoring and reporting. Firebase Authentication manages user registration, sign-in, and identity verification, while MongoDB stores application data such as user-related records, scan history, detection results, threat reports, and system records. The FastAPI backend coordinates security processing, verifies authenticated requests, and accesses MongoDB according to the user's authorization.\par
+
+\section*{2. Product Scope}\addcontentsline{toc}{section}{2. Product Scope}
 
 The browser extension acts as the primary protection layer by monitoring supported browsing activities, evaluating URLs, inspecting webpage content and behaviour, identifying suspicious redirects, and monitoring download events. It provides protection against ten threat categories: URL and fake QR phishing, Cross-Site Scripting (XSS), credential harvesting, HTML/JavaScript redirects, clickjacking, cryptojacking, malicious file downloads, email phishing, browser notification scams, and browser extension abuse.\par
 
@@ -491,9 +500,10 @@ Identifies suspicious browser extensions by monitoring overly broad permissions,
 
 \textbf{REQ-34 (Detection Scope):} The system shall limit its conclusions to extension behavior and permission information observable through supported browser mechanisms.\par
 
+
 \textbf{REQ-35 (Privacy):} The system shall minimize the collection of unrelated browsing information during extension-abuse detection.\par
 % END_INSERTED_SPECIFICATION
-
+\break
 \noindent\hspace{7mm}{\fontsize{26}{32}\selectfont\bfseries Literature Review}\par
 \vspace{2.2em}
 
@@ -564,6 +574,8 @@ Identifies suspicious browser extensions by monitoring overly broad permissions,
 \section*{Literature Review Outcome}
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
+\raggedright
+\hbadness=10000
 \begin{longtable}{|p{0.7cm}|p{2.5cm}|p{2.7cm}|p{3.3cm}|p{5.1cm}|p{4.9cm}|}
 \hline
 \textbf{SI. No.} & \textbf{Features} & \textbf{Existing Systems} & \textbf{Literature Survey} & \textbf{Advantages / Disadvantages} & \textbf{Proposed System} \\
@@ -594,5 +606,6 @@ Identifies suspicious browser extensions by monitoring overly broad permissions,
 10 & Credential Harvesting & Microsoft Defender SmartScreen; Microsoft Edge & Web scraping with Playwright (2026) & Advantages: HTML and JavaScript can be evaluated with Playwright. Disadvantages: Not specified in the source document. & Use Playwright to detect external domains loading scripts and block scam pop-ups. \\
 \hline
 \end{longtable}
+\hbadness=1000
 \end{landscape}
 \end{document}
