@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper]{report}
 \usepackage[left=29mm,right=19mm,top=30mm,bottom=28mm,headheight=14pt,headsep=12mm,footskip=14mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -19,6 +19,8 @@
 \setlength{\parskip}{0pt}
 \setlength{\emergencystretch}{3em}
 
+\titleformat{\chapter}[display]{\normalfont\bfseries\raggedright}{\chaptername\space\thechapter}{0.5em}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{2.2em}
 \titleformat{\section}{\Large\bfseries\setstretch{1.45}\raggedright}{\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{2.2em}{1.4em}
 
@@ -26,19 +28,19 @@
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.5pt}
-\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification}
+\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification for BrowseBlock}
 \fancyhead[R]{\small\bfseries\thepage}
 \fancyfoot[L]{\small\itshape Department of Computer Science and Engineering, SJCET Palai}
 \fancypagestyle{plain}{\fancyhf{}
 	\renewcommand{\headrulewidth}{0.5pt}
 	\renewcommand{\footrulewidth}{0.5pt}
-	\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification}
+	\fancyhead[L]{\small\bfseries\itshape Software Requirements Specification for BrowseBlock}
 	\fancyhead[R]{\small\bfseries\thepage}
 	\fancyfoot[L]{\small\itshape Department of Computer Science and Engineering, SJCET Palai}}
 
 \begin{document}
 \thispagestyle{empty}
-\begin{flushright}
+\begin{center}
 \vspace*{18mm}
 {\LARGE\bfseries Software Requirements Specification\hspace{1.2em}}\\[3.2em]
 {\large\bfseries for\hspace{1.2em}}\\[4.2em]
@@ -51,13 +53,27 @@
 {\small Maria Royce (SJC23CS159)\hspace{1.2em}}\\[1.1em]
 {\small Melbin K Thomas (SJC23CS164)\hspace{1.2em}}\\[3.6em]
 {\normalsize\bfseries St.\ Joseph's College of Engineering and Technology, Palai\hspace{1.2em}}\\[3.6em]
-{\normalsize\bfseries 11-10-2026\hspace{1.2em}}
-\end{flushright}
+ {\normalsize\bfseries Date: 11/10/2026}
+\end{center}
 \newpage
 \renewcommand{\contentsname}{Table Of Contents}
 \setcounter{tocdepth}{2}
 \pagenumbering{roman}
-\setcounter{page}{2}
+\setcounter{page}{1}
+\chapter*{Revision History}
+\addcontentsline{toc}{chapter}{Revision History}
+\begin{center}
+\hbadness=10000
+\begin{tabular}{|p{0.28\textwidth}|p{0.16\textwidth}|p{0.32\textwidth}|p{0.12\textwidth}|}
+\hline
+\textbf{Name} & \textbf{Date} & \textbf{Reason for Changes} & \textbf{Version} \\
+\hline
+BrowseBlock Project Team & 11/10/2026 & Initial SRS draft & 1.0 \\
+\hline
+\end{tabular}
+\hbadness=1000
+\end{center}
+\newpage
 \tableofcontents
 \clearpage
 \hypersetup{pageanchor=true}
@@ -65,11 +81,21 @@
 
 % BEGIN_INSERTED_SPECIFICATION
 
-\section*{1. Introduction}\addcontentsline{toc}{section}{1. Introduction}
+\chapter{Introduction}
 
-BrowseBlock is an AI/ML-powered browser security platform(both browser extension and web dashboard) designed to detect, analyze, explain, and help prevent browser-based cyber threats in real time. The system consists of a browser extension, a FastAPI backend for centralized security processing, and a React-based web dashboard for security monitoring and reporting. Firebase Authentication manages user registration, sign-in, and identity verification, while MongoDB stores application data such as user-related records, scan history, detection results, threat reports, and system records. The FastAPI backend coordinates security processing, verifies authenticated requests, and accesses MongoDB according to the user's authorization.\par
+\section{Purpose}
 
-\section*{2. Product Scope}\addcontentsline{toc}{section}{2. Product Scope}
+BrowseBlock is an AI/ML-powered browser security platform consisting of a browser extension and web dashboard. It detects, analyzes, explains, and helps prevent browser-based cyber threats in real time. This Software Requirements Specification defines the system's objectives, scope, interfaces, functional requirements, constraints, and quality requirements for development, testing, and evaluation.\par
+
+\section{Document Conventions}
+
+This document follows a structured Software Requirements Specification format. Mandatory requirements use the phrase ``The system shall''. Desirable capabilities use ``should''. Requirements are identified with unique BrowseBlock requirement identifiers, and detection results use the risk levels Safe, Suspicious, and High-risk.\par
+
+\section{Intended Audience and Reading Suggestions}
+
+This document is intended for project guides, review committee members, developers, testers, security analysts, and other stakeholders involved in BrowseBlock. Readers should begin with the Introduction and Overall Description, followed by External Interface Requirements and System Features. The remaining chapters describe non-functional requirements, other requirements, and supporting research material.\par
+
+\section{Product Scope}
 
 The browser extension acts as the primary protection layer by monitoring supported browsing activities, evaluating URLs, inspecting webpage content and behaviour, identifying suspicious redirects, and monitoring download events. It provides protection against ten threat categories: URL and fake QR phishing, Cross-Site Scripting (XSS), credential harvesting, HTML/JavaScript redirects, clickjacking, cryptojacking, malicious file downloads, email phishing, browser notification scams, and browser extension abuse.\par
 
@@ -85,7 +111,17 @@ The React web dashboard enables users to manually scan URLs, QR codes, emails, a
 
 The primary objective of BrowseBlock is to provide a unified, explainable, and user-friendly browser security solution for individuals and organizations. It aims to reduce exposure to phishing attacks and malicious web activities without replacing existing antivirus software, browser security features, or enterprise security solutions.\par
 
-\subsection*{2.1 User Classes and Characteristics}\addcontentsline{toc}{subsection}{2.1 User Classes and Characteristics}
+\chapter{Overall Description}
+
+\section{Product Perspective}
+
+BrowseBlock combines a browser extension, a FastAPI backend, a React web dashboard, Firebase Authentication, MongoDB, machine-learning models, and AI-assisted analysis. The extension provides lightweight, event-driven protection during browsing, while the backend performs centralized processing and the dashboard supports manual scanning, reporting, and review.\par
+
+\section{Product Functions}
+
+The main functions include real-time URL and QR phishing detection, webpage and script inspection, credential-harvesting detection, redirect-chain analysis, clickjacking detection, cryptojacking detection, malicious-download analysis, email phishing analysis, browser-notification scam detection, browser-extension abuse detection, risk-based warnings and blocking, explainable results, history, and authorized security reporting.\par
+
+\section{User Classes and Characteristics}
 
 \textbf{Primary Users:} General internet users, students, employees, and individuals who browse websites, access web-based email services, encounter QR codes, and download files. These users may have limited cybersecurity knowledge and require clear warnings, understandable explanations, and practical security recommendations.\par
 
@@ -97,7 +133,7 @@ The primary objective of BrowseBlock is to provide a unified, explainable, and u
 
 The system is intended to provide an accessible interface for non-technical users while offering detailed threat information and detection evidence for users who require more comprehensive security analysis.\par
 
-\subsection*{2.2 Operating Environment}\addcontentsline{toc}{subsection}{2.2 Operating Environment}
+\section{Operating Environment}
 
 \textbf{Browser Environment:} Google Chrome and compatible Chromium-based browsers that support the required browser-extension APIs. Manifest V3 is the intended extension architecture, subject to the availability and limitations of the required APIs.\par
 
@@ -117,7 +153,7 @@ The system is intended to provide an accessible interface for non-technical user
 
 \textbf{Security Requirements:} The system should use HTTPS for network communication, Firebase Authentication for user sign-in and identity verification, server-side verification of Firebase ID tokens by FastAPI, and appropriate authorization checks for protected endpoints and stored records. MongoDB access must be restricted, and queries returning user-specific data must enforce ownership or role-based access controls. URLs, email content, downloaded files, authentication tokens, and other potentially sensitive information must be handled securely. Data collection and retention should be minimized to protect user privacy.\par
 
-\subsection*{2.3 Authentication and Application Data Management}\addcontentsline{toc}{subsection}{2.3 Authentication and Application Data Management}
+\section{Design and Implementation Constraints}
 
 \textbf{User Authentication:} Firebase Authentication shall be used for user registration, sign-in, and identity verification. The frontend shall use the Firebase Authentication client integration appropriate to the application. Protected requests to FastAPI shall include the Firebase ID token, and the backend shall validate the token server-side before processing the request.\par
 
@@ -125,29 +161,39 @@ The system is intended to provide an accessible interface for non-technical user
 
 \textbf{Authorization and Privacy:} Data access shall be restricted to the authenticated user or other explicitly authorized roles. The backend shall enforce authorization before reading or changing user-specific MongoDB records. Sensitive URL parameters, email content, webpage contents, downloaded file contents, and authentication tokens shall not be retained unnecessarily. The retention of scan records and reports shall follow the system's configured privacy and retention policy.\par
 
-\section*{3. Objectives}\addcontentsline{toc}{section}{3. Objectives}
+\textbf{Authentication and Application Data Management:} Firebase Authentication shall manage user registration, sign-in, and identity verification. MongoDB shall store applicable user profile metadata, scan history, detection results, threat reports, and system records. Authentication credentials and passwords shall not be stored in MongoDB. Data access shall be restricted to authenticated users or explicitly authorized roles.\par
 
-\textbf{Real-Time Threat Handling:} Detect, analyze, explain, and prevent major browser-based cyber threats in real time.\par
+\section{User Documentation}
 
-\textbf{Active User Protection:} Provide active protection while the user browses using a browser extension by monitoring events, issuing warnings, and blocking harmful actions whenever possible.\par
+The system should provide a user guide, supported-file information, examples of scan workflows, instructions for reviewing reports, explanations of risk decisions, and troubleshooting guidance for failed or unsupported operations.\par
 
-\textbf{Core Security Philosophy Execution:} Implement a security lifecycle focused on detecting threats, assessing risk, explaining why they are dangerous, and preventing harmful actions.\par
+\section{Assumptions and Dependencies}
 
-\textbf{Centralized Analysis and Management:} Support client-side protection with a FastAPI backend for centralized security processing, deep model inference, model management, and authorized interaction with MongoDB.\par
+The system depends on supported Chromium browser APIs, network connectivity, Firebase Authentication, MongoDB, configured machine-learning models, AI services, and available threat-intelligence services. Detection and prevention capabilities are limited by browser permissions, API availability, model quality, and the evidence observable during browsing.\par
 
-\textbf{Visibility and Reporting:} Provide centralized visibility into overall security posture, threat statistics, analytics, incident details, persistent detection history, and manual scanning capabilities through the web dashboard, using records stored in MongoDB and enforcing user-specific access controls.\par
+\chapter{External Interface Requirements}
 
-\textbf{Proportional Risk Evaluation:} Move away from simple binary detection by utilizing a tiered risk decision model (Safe/allow, Suspicious/warn, High-risk/block) based on evaluated threat risk levels.\par
+\section{User Interfaces}
 
-\textbf{Secure Authentication and Access Control:} Use Firebase Authentication for user registration, sign-in, and identity verification. FastAPI shall validate Firebase ID tokens and enforce authorization before allowing access to protected endpoints or user-specific MongoDB records.\par
+The browser extension shall provide warnings, risk explanations, and protective-action feedback during browsing. The web dashboard shall provide authentication, manual scan forms for URLs, QR codes, emails, and files, detection-history views, threat reports, analytics, and evidence supporting each security decision.\par
 
-\textbf{Balancing Performance and Security:} Maintain a lightweight, event-driven client layer that safeguards user privacy and separates AI/ML risk assessment from deterministic browser enforcement.\par
+\section{Hardware Interfaces}
 
-\section*{4. System Features}\addcontentsline{toc}{section}{4. System Features}
+BrowseBlock requires a desktop or laptop computer capable of running a supported Chromium-based browser. Local storage may be used for extension operation and controlled download workflows. No special hardware is required for normal browsing protection.\par
 
-\subsection*{4.1 URL and Fake QR Phishing}\addcontentsline{toc}{subsection}{4.1 URL and Fake QR Phishing}
+\section{Software Interfaces}
 
-\subsubsection*{4.1.1 Description}
+The system shall interface with Chromium browser-extension APIs, React and Tailwind CSS, FastAPI, Firebase Authentication, MongoDB, XGBoost, Random Forest, file-analysis libraries, QR-decoding components, and configured RAG/LLM or threat-intelligence services.\par
+
+\section{Communications Interfaces}
+
+Deployed client-server communication shall use HTTPS. Protected requests shall carry Firebase ID tokens, which FastAPI shall verify server-side. API credentials shall not be exposed in extension or dashboard code, and MongoDB shall not be exposed directly to untrusted clients.\par
+
+\chapter{System Features}
+
+\subsection*{4.1 URL and Fake QR Phishing}\addcontentsline{toc}{section}{4.1 URL and Fake QR Phishing}
+
+\subsubsection*{4.1.1 Description and Priority}
 
 Evaluates URLs using an XGBoost classifier across normalized numerical features (such as URL length, IP usage, domain age, subdomains, and brand impersonation indicators), and decodes QR codes to evaluate the underlying URL payload to warn or block navigation.\par
 
@@ -173,9 +219,9 @@ Evaluates URLs using an XGBoost classifier across normalized numerical features 
 
 \textbf{REQ-04 (Privacy):} The system shall minimize the storage of sensitive URL parameters and unnecessary browsing information.\par
 
-\subsection*{4.2 Cross-Site Scripting (XSS)}\addcontentsline{toc}{subsection}{4.2 Cross-Site Scripting (XSS)}
+\subsection*{4.2 Cross-Site Scripting (XSS)}\addcontentsline{toc}{section}{4.2 Cross-Site Scripting (XSS)}
 
-\subsubsection*{4.2.1 Description}
+\subsubsection*{4.2.1 Description and Priority}
 
 Detects potential Cross-Site Scripting (XSS) attacks by inspecting webpage content, JavaScript behavior, and DOM manipulation for suspicious script injection indicators. The system addresses three types of XSS attacks: reflected XSS, stored XSS, and DOM-based XSS. Detection techniques include identifying suspicious URL parameters, injected script patterns, dynamically generated code, obfuscated JavaScript, unsafe DOM sinks, and unexpected script sources. BrowseBlock uses configured detection rules and observable browser behavior to assess potential threats, warn users, and restrict suspicious interactions where browser capabilities permit.\par
 
@@ -219,9 +265,9 @@ Detects potential Cross-Site Scripting (XSS) attacks by inspecting webpage conte
 
 \textbf{REQ-09 (Prevention Limitations):} The system shall distinguish between detecting suspicious behavior and preventing script execution, and shall not report an attack as blocked unless the configured protective action has actually been applied.\par
 
-\subsection*{4.3 Credential Harvesting}\addcontentsline{toc}{subsection}{4.3 Credential Harvesting}
+\subsection*{4.3 Credential Harvesting}\addcontentsline{toc}{section}{4.3 Credential Harvesting}
 
-\subsubsection*{4.3.1 Description}
+\subsubsection*{4.3.1 Description and Priority}
 
 Detects potential credential-harvesting attempts by analyzing suspicious external script loading, deceptive login interfaces, and scam pop-ups. Playwright is used in the analysis and testing workflow to automate webpage interactions, monitor network requests, identify external script domains, and investigate suspicious pop-up behavior. The collected indicators support risk assessment and the development of blocking rules within the BrowseBlock browser extension.\par
 
@@ -251,9 +297,9 @@ Detects potential credential-harvesting attempts by analyzing suspicious externa
 
 \textbf{REQ-10 (Detection Accuracy):} The detector shall minimize false positives involving legitimate third-party scripts, authentication providers, and normal pop-up behavior.\par
 
-\subsection*{4.4 HTML/JavaScript Redirects}\addcontentsline{toc}{subsection}{4.4 HTML/JavaScript Redirects}
+\subsection*{4.4 HTML/JavaScript Redirects}\addcontentsline{toc}{section}{4.4 HTML/JavaScript Redirects}
 
-\subsubsection*{4.4.1 Description}
+\subsubsection*{4.4.1 Description and Priority}
 
 Monitors HTTP redirects, JavaScript-based navigation, and meta-refresh tags to trace redirect chains, evaluate destination reputation, and interrupt malicious navigation.\par
 
@@ -281,9 +327,9 @@ Monitors HTTP redirects, JavaScript-based navigation, and meta-refresh tags to t
 
 \textbf{REQ-13 (Resource Efficiency):} The system shall avoid unnecessary repeated analysis of the same redirect event.\par
 
-\subsection*{4.5 Clickjacking}\addcontentsline{toc}{subsection}{4.5 Clickjacking}
+\subsection*{4.5 Clickjacking}\addcontentsline{toc}{section}{4.5 Clickjacking}
 
-\subsubsection*{4.5.1 Description}
+\subsubsection*{4.5.1 Description and Priority}
 
 Identifies deceptive framing behavior and suspicious iframe setups to block risky interactions or issue warnings, complementing server-side defenses like CSP frame-ancestors and X-Frame-Options.\par
 
@@ -309,9 +355,9 @@ Identifies deceptive framing behavior and suspicious iframe setups to block risk
 
 \textbf{REQ-16 (Browser Compatibility):} The system shall implement clickjacking protections within the capabilities and permissions of the selected browser.\par
 
-\subsection*{4.6 Cryptojacking}\addcontentsline{toc}{subsection}{4.6 Cryptojacking}
+\subsection*{4.6 Cryptojacking}\addcontentsline{toc}{section}{4.6 Cryptojacking}
 
-\subsubsection*{4.6.1 Description}
+\subsubsection*{4.6.1 Description and Priority}
 
 Inspects scripts, WebAssembly behaviors, web worker activities, and abnormal resource-usage patterns to identify and block unauthorized cryptocurrency mining in the browser.\par
 
@@ -339,9 +385,9 @@ Inspects scripts, WebAssembly behaviors, web worker activities, and abnormal res
 
 \textbf{REQ-19 (Monitoring Limitations):} The system shall restrict its conclusions to script behavior and resource information observable through supported browser mechanisms.\par
 
-\subsection*{4.7 Malicious File Download Detection}\addcontentsline{toc}{subsection}{4.7 Malicious File Download Detection}
+\subsection*{4.7 Malicious File Download Detection}\addcontentsline{toc}{section}{4.7 Malicious File Download Detection}
 
-\subsubsection*{4.7.1 Description}
+\subsubsection*{4.7.1 Description and Priority}
 
 Implements a malicious file download detection pipeline that monitors supported downloads of \texttt{.exe}, \texttt{.zip}, \texttt{.pdf}, \texttt{.doc}, and \texttt{.docx} files through the browser extension. The system uses content-based file identification, format-specific static analysis, SHA-256 hash calculation, available threat-intelligence checks, deterministic rules, and XGBoost classification to assess file risk without executing untrusted files. The FastAPI backend coordinates analysis and risk assessment, while a native helper application can provide access to file contents and support controlled quarantine and release workflows. Based on the assessment, BrowseBlock shall allow, warn about, cancel, or quarantine files where supported by the selected integration.\par
 
@@ -398,9 +444,9 @@ Implements a malicious file download detection pipeline that monitors supported 
 \textbf{REQ-32 (Model Reliability):} The system shall evaluate the XGBoost classifier using appropriate validation data and shall not rely on model predictions alone when making high-impact file-blocking decisions.\par
 
 \textbf{REQ-33 (Integration Compatibility):} The system shall implement download monitoring and enforcement according to the capabilities and permissions of the selected browser APIs, native helper, or controlled download gateway.\par
-\subsection*{4.8 Email Phishing Detection}\addcontentsline{toc}{subsection}{4.8 Email Phishing Detection}
+\subsection*{4.8 Email Phishing Detection}\addcontentsline{toc}{section}{4.8 Email Phishing Detection}
 
-\subsubsection*{4.8.1 Description}
+\subsubsection*{4.8.1 Description and Priority}
 
 Implements a two-stage email phishing detection pipeline. The browser extension performs lightweight initial screening using a Random Forest classifier and available email-authentication signals, including SPF, DKIM, and DMARC results. For detailed investigation, the web dashboard uses a Retrieval-Augmented Generation (RAG) pipeline to analyze email content, identify social engineering tactics, and extract URLs. The extracted URLs are evaluated using BrowseBlock's URL phishing detection module. This architecture enables efficient initial screening in the browser extension while providing deeper contextual analysis through the web dashboard when required.\par
 
@@ -446,9 +492,9 @@ Implements a two-stage email phishing detection pipeline. The browser extension 
 
 \textbf{REQ-29 (Failure Handling):} The system shall distinguish incomplete or failed email analysis from a completed safe verdict and shall communicate analysis limitations where appropriate.\par
 
-\subsection*{4.9 Browser Notification Scams}\addcontentsline{toc}{subsection}{4.9 Browser Notification Scams}
+\subsection*{4.9 Browser Notification Scams}\addcontentsline{toc}{section}{4.9 Browser Notification Scams}
 
-\subsubsection*{4.9.1 Description}
+\subsubsection*{4.9.1 Description and Priority}
 
 Detects deceptive notification requests and prompts imitating urgent system alerts, prizes, or fake security warnings, issuing warnings or blocking interactions when browser APIs allow.\par
 
@@ -474,9 +520,9 @@ Detects deceptive notification requests and prompts imitating urgent system aler
 
 \textbf{REQ-32 (Monitoring Scope):} The system shall limit its conclusions to notification-related content and behavior observable through supported browser mechanisms.\par
 
-\subsection*{4.10 Browser Extension Abuse}\addcontentsline{toc}{subsection}{4.10 Browser Extension Abuse}
+\subsection*{4.10 Browser Extension Abuse}\addcontentsline{toc}{section}{4.10 Browser Extension Abuse}
 
-\subsubsection*{4.10.1 Description}
+\subsubsection*{4.10.1 Description and Priority}
 
 Identifies suspicious browser extensions by monitoring overly broad permissions, unexpected webpage tampering, and malicious script injection through observable browser security mechanisms.\par
 
@@ -503,7 +549,48 @@ Identifies suspicious browser extensions by monitoring overly broad permissions,
 
 \textbf{REQ-35 (Privacy):} The system shall minimize the collection of unrelated browsing information during extension-abuse detection.\par
 % END_INSERTED_SPECIFICATION
-\break
+\chapter{Other Nonfunctional Requirements}
+
+\section{Performance Requirements}
+
+The extension shall provide responsive protection under normal browsing conditions. Resource-intensive analysis should be delegated to the backend or dashboard, and long-running scans shall expose their status. The system shall handle timeouts and component failures without leaving users with an unknown or misleading result.\par
+
+\section{Safety Requirements}
+
+The system shall not execute untrusted downloaded files for analysis. It shall distinguish detection from confirmed prevention, report incomplete analysis, communicate uncertainty, and avoid treating automated checks or AI explanations as guarantees of safety.\par
+
+\section{Security Requirements}
+
+The deployed system shall use HTTPS, Firebase Authentication, server-side token verification, authorization checks, restricted database access, secure handling of URLs and uploaded content, and configured retention controls. API keys and database credentials shall not be exposed in frontend code or public repositories.\par
+
+\section{Software Quality Attributes}
+
+BrowseBlock should provide usability, reliability, maintainability, scalability, interoperability, transparency, privacy, and compatibility. The system shall provide understandable errors, preserve user control over consequential actions, and report the limitations of models and browser APIs.\par
+
+\chapter{Other Requirements}
+
+The system shall support future improvements such as additional threat categories, updated machine-learning models, new browser APIs, improved threat intelligence, and additional dashboard analytics. The architecture should remain modular so that detection modules, model versions, integrations, and retention policies can be tested and updated independently.\par
+
+\appendix
+\chapter{Glossary}
+
+\textbf{Browser Extension:} The BrowseBlock client component that monitors supported browser activity and provides warnings or protective actions.\par
+\textbf{Risk Assessment:} The evaluation of available evidence to classify activity as Safe, Suspicious, or High-risk.\par
+\textbf{RAG:} Retrieval-Augmented Generation, which supplies retrieved information to an AI model for contextual analysis.\par
+\textbf{XSS:} Cross-Site Scripting, a class of attacks involving the injection or execution of untrusted scripts.\par
+\textbf{SRS:} Software Requirements Specification.\par
+
+\chapter{Analysis Models}
+
+The final report may include use-case, system-architecture, activity, and data-flow diagrams showing users, browser-extension events, backend analysis, AI/ML components, databases, and protective actions.\par
+
+\chapter{To Be Determined List}
+
+The following items shall be finalized during implementation: supported browser versions and APIs, model versions and evaluation datasets, threat-intelligence providers, supported file-size limits, retention periods, deployment topology, and the exact set of features included in the first prototype.\par
+
+\end{document}
+\pdfbookmark[0]{Appendix D: Literature Review}{appendix-literature-review}
+\addcontentsline{toc}{chapter}{Appendix D: Literature Review}
 \noindent\hspace{7mm}{\fontsize{26}{32}\selectfont\bfseries Literature Review}\par
 \vspace{2.2em}
 
