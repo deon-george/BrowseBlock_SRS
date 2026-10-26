@@ -1,7 +1,7 @@
 # BrowseBlock SRS
 
 > [!TIP]
-> 📑 [Click here to view the Full Literature Review (`review.pdf`)](./review.pdf)
+> 📑 [Click here to view the Full SRS (`review.pdf`)](./review.pdf)
 
 Welcome to the repository for the BrowseBlock - Software Requirements Specification(SRS), written in LaTeX. This project serves as a centralized, version-controlled source for the document, allowing for clean formatting and easy updates.
 
